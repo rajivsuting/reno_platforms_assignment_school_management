@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Building2, ArrowLeft, Save, Trash2 } from "lucide-react";
+import { Building2, ArrowLeft, Save, Trash2, Upload } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function EditSchool() {
@@ -130,8 +130,6 @@ export default function EditSchool() {
     }
 
     setDeleting(true);
-    setError(null);
-
     try {
       const response = await fetch(`/api/schools/${params.id}`, {
         method: "DELETE",
@@ -152,9 +150,11 @@ export default function EditSchool() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-center min-h-96">
-          <LoadingSpinner size="lg" text="Loading school details..." />
+      <div className="min-h-screen bg-gray-50 pt-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex items-center justify-center min-h-96">
+            <LoadingSpinner size="lg" text="Loading school details..." />
+          </div>
         </div>
       </div>
     );
@@ -162,208 +162,240 @@ export default function EditSchool() {
 
   if (error && !school) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center">
-          <Building2 className="h-12 w-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{error}</h2>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Go Back
-          </button>
+      <div className="min-h-screen bg-gray-50 pt-20">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="text-center">
+            <Building2 className="h-12 w-12 text-red-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{error}</h2>
+            <button
+              onClick={() => router.back()}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Go Back
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Back Button */}
-      <div className="mb-6">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to School Details
-        </button>
-      </div>
-
-      {/* Edit Form */}
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
-          <div className="flex items-center">
-            <Building2 className="h-12 w-12 mr-4" />
-            <div>
-              <h1 className="text-3xl font-bold">Edit School</h1>
-              <p className="text-blue-100 mt-1">
-                Update information for {school?.name}
-              </p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 pt-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Back Button */}
+        <div className="mb-6">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center text-blue-600 hover:text-blue-700 transition-colors text-sm sm:text-base"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to School Details
+          </button>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 sm:p-8">
+          <div className="text-center mb-8">
+            <Building2 className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+              Edit School
+            </h1>
+            <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
+              Update the school information below
+            </p>
+          </div>
+
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-              {error}
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800 text-sm">{error}</p>
             </div>
           )}
 
-          {/* School Image */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              School Image
-            </label>
-            <div className="flex items-center space-x-4">
-              {formData.image ? (
-                <img
-                  src={formData.image}
-                  alt="School"
-                  className="w-32 h-32 object-cover rounded-lg border"
-                />
-              ) : (
-                <div className="w-32 h-32 bg-gray-200 rounded-lg border flex items-center justify-center">
-                  <Building2 className="h-12 w-12 text-gray-400" />
-                </div>
-              )}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Form Fields Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  School Name *
+                </label>
                 <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter school name"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Upload a new image to replace the current one
-                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contact Number *
+                </label>
+                <input
+                  type="tel"
+                  name="contact"
+                  value={formData.contact}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter contact number"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address *
+                </label>
+                <input
+                  type="email"
+                  name="email_id"
+                  value={formData.email_id}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter email address"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  City *
+                </label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter city"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  State *
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  placeholder="Enter state"
+                />
               </div>
             </div>
-          </div>
 
-          {/* Basic Information */}
-          <div className="grid md:grid-cols-2 gap-6">
+            {/* Address Field */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                School Name *
+                Address *
               </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
+              <textarea
+                name="address"
+                value={formData.address}
                 onChange={handleInputChange}
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
+                placeholder="Enter complete address"
               />
             </div>
 
+            {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                City *
+                School Image
               </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                <div className="space-y-1 text-center">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="flex flex-col sm:flex-row text-sm text-gray-600 items-center justify-center">
+                    <label
+                      htmlFor="image-upload"
+                      className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500"
+                    >
+                      <span>Upload a file</span>
+                      <input
+                        id="image-upload"
+                        name="image-upload"
+                        type="file"
+                        className="sr-only"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                      />
+                    </label>
+                    <p className="pl-1 mt-1 sm:mt-0">or drag and drop</p>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    PNG, JPG, GIF up to 10MB
+                  </p>
+                </div>
+              </div>
+              {formData.image && (
+                <div className="mt-4 flex justify-center">
+                  <img
+                    src={formData.image}
+                    alt="Current school image"
+                    className="h-32 w-32 object-cover rounded-lg border border-gray-300 shadow-sm"
+                  />
+                </div>
+              )}
             </div>
-          </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                State *
-              </label>
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contact Number *
-              </label>
-              <input
-                type="tel"
-                name="contact"
-                value={formData.contact}
-                onChange={handleInputChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              name="email_id"
-              value={formData.email_id}
-              onChange={handleInputChange}
-              required
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Address *
-            </label>
-            <textarea
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-between pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={handleDelete}
-              disabled={deleting}
-              className="flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              {deleting ? "Deleting..." : "Delete School"}
-            </button>
-
-            <div className="flex space-x-3">
+            {/* Form Actions */}
+            <div className="flex flex-col sm:flex-row justify-between gap-3 pt-6 border-t border-gray-200">
               <button
                 type="button"
-                onClick={() => router.back()}
-                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                onClick={handleDelete}
+                disabled={deleting}
+                className="w-full sm:w-auto px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
               >
-                Cancel
+                {deleting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete School
+                  </>
+                )}
               </button>
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex items-center px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {saving ? "Saving..." : "Save Changes"}
-              </button>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="w-full sm:w-auto px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center font-medium"
+                >
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );

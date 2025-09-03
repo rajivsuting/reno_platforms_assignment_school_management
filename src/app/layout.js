@@ -16,7 +16,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <ErrorBoundary>
           <Navigation />
-          <main className="min-h-screen bg-gray-50 pt-16">{children}</main>
+          <main>{children}</main>
         </ErrorBoundary>
       </body>
     </html>
