@@ -2,6 +2,19 @@
 
 A professional school management platform built with Next.js and MySQL, featuring a modern UI design and comprehensive data management capabilities.
 
+## ⚠️ Important Notice
+
+**For the best experience, please run this application locally.**
+
+The deployed version on Vercel has limitations with image uploads due to serverless environment constraints. While the application is fully functional for viewing schools, adding/editing schools with images works best in a local development environment.
+
+**Local Development Benefits:**
+
+- ✅ Full image upload functionality
+- ✅ Complete CRUD operations
+- ✅ Better performance
+- ✅ No serverless limitations
+
 ## Features
 
 ### 🏫 Add School Page (`/addSchool`)
