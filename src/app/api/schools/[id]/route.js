@@ -30,7 +30,7 @@ export async function PUT(request, { params }) {
 
     // Update school
     await connection.execute(
-      "UPDATE schools SET name = ?, address = ?, city = ?, state = ?, contact = ?, email_id = ?, image = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+      "UPDATE schools SET name = ?, address = ?, city = ?, state = ?, contact = ?, email_id = ?, image = ? WHERE id = ?",
       [name, address, city, state, contact, email_id, image, id]
     );
 

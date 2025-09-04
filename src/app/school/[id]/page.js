@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Building2,
   MapPin,
@@ -23,31 +24,29 @@ export default function SchoolDetails() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const fetchSchoolDetails = async () => {
+      try {
+        const response = await fetch("/api/schools");
+        if (!response.ok) {
+          throw new Error("Failed to fetch schools");
+        }
+        const data = await response.json();
+        const schoolData = data.schools.find(
+          (s) => s.id === parseInt(params.id)
+        );
+        if (schoolData) {
+          setSchool(schoolData);
+        } else {
+          setError("School not found");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchSchoolDetails();
   }, [params.id]);
-
-  const fetchSchoolDetails = async () => {
-    try {
-      const response = await fetch("/api/schools");
-      if (!response.ok) {
-        throw new Error("Failed to fetch schools");
-      }
-      const data = await response.json();
-      const foundSchool = data.schools.find(
-        (s) => s.id.toString() === params.id
-      );
-
-      if (foundSchool) {
-        setSchool(foundSchool);
-      } else {
-        setError("School not found");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (
@@ -144,11 +143,12 @@ export default function SchoolDetails() {
           <div className="p-4 sm:p-6">
             {/* School Image */}
             {school.image && (
-              <div className="mb-6">
-                <img
+              <div className="mb-6 relative w-full h-48 sm:h-64">
+                <Image
                   src={school.image}
                   alt={school.name}
-                  className="w-full h-48 sm:h-64 object-cover rounded-lg border border-gray-200"
+                  fill
+                  className="object-cover rounded-lg border border-gray-200"
                   onError={(e) => {
                     e.target.src = "/placeholder-school.jpg";
                   }}

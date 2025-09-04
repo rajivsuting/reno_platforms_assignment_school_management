@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Building2,
@@ -27,6 +28,30 @@ export default function ShowSchools() {
 
   // Separate useEffect for filtering to avoid infinite loops
   useEffect(() => {
+    const filterSchools = () => {
+      let filtered = allSchools;
+
+      // Apply search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        filtered = filtered.filter(
+          (school) =>
+            school.name.toLowerCase().includes(searchLower) ||
+            school.address.toLowerCase().includes(searchLower) ||
+            school.city.toLowerCase().includes(searchLower)
+        );
+      }
+
+      // Apply city filter
+      if (filterCity) {
+        filtered = filtered.filter(
+          (school) => school.city.toLowerCase() === filterCity.toLowerCase()
+        );
+      }
+
+      setSchools(filtered);
+    };
+
     if (searchTerm || filterCity) {
       filterSchools();
     } else {
@@ -48,31 +73,6 @@ export default function ShowSchools() {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Client-side filtering function
-  const filterSchools = () => {
-    let filtered = allSchools;
-
-    // Apply search filter
-    if (searchTerm) {
-      const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (school) =>
-          school.name.toLowerCase().includes(searchLower) ||
-          school.address.toLowerCase().includes(searchLower) ||
-          school.city.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Apply city filter
-    if (filterCity) {
-      filtered = filtered.filter(
-        (school) => school.city.toLowerCase() === filterCity.toLowerCase()
-      );
-    }
-
-    setSchools(filtered);
   };
 
   // Function to get proper image URL
@@ -221,10 +221,11 @@ export default function ShowSchools() {
                 {/* School Image */}
                 <div className="w-full h-52 bg-gray-100 overflow-hidden relative">
                   {school.image ? (
-                    <img
+                    <Image
                       src={getImageUrl(school.image)}
                       alt={school.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         console.log("Image failed to load:", school.image);
                         e.target.style.display = "none";

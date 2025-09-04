@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import Image from "next/image";
 import {
   Building2,
   Upload,
@@ -312,11 +313,14 @@ export default function AddSchool() {
               </div>
               {imagePreview && (
                 <div className="mt-4 flex justify-center">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="h-32 w-32 object-cover rounded-lg border border-gray-300 shadow-sm"
-                  />
+                  <div className="relative h-32 w-32">
+                    <Image
+                      src={imagePreview}
+                      alt="Preview"
+                      fill
+                      className="object-cover rounded-lg border border-gray-300 shadow-sm"
+                    />
+                  </div>
                 </div>
               )}
             </div>

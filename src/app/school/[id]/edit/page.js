@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { Building2, ArrowLeft, Save, Trash2, Upload } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -23,40 +24,35 @@ export default function EditSchool() {
   });
 
   useEffect(() => {
+    const fetchSchoolDetails = async () => {
+      try {
+        const response = await fetch("/api/schools");
+        if (!response.ok) {
+          throw new Error("Failed to fetch schools");
+        }
+        const data = await response.json();
+        const schoolData = data.schools.find(
+          (s) => s.id === parseInt(params.id)
+        );
+        if (schoolData) {
+          setFormData({
+            name: schoolData.name || "",
+            address: schoolData.address || "",
+            city: schoolData.city || "",
+            state: schoolData.state || "",
+            contact: schoolData.contact || "",
+            email_id: schoolData.email_id || "",
+            image: schoolData.image || "",
+          });
+        } else {
+          setError("School not found");
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
     fetchSchoolDetails();
   }, [params.id]);
-
-  const fetchSchoolDetails = async () => {
-    try {
-      const response = await fetch("/api/schools");
-      if (!response.ok) {
-        throw new Error("Failed to fetch schools");
-      }
-      const data = await response.json();
-      const foundSchool = data.schools.find(
-        (s) => s.id.toString() === params.id
-      );
-
-      if (foundSchool) {
-        setSchool(foundSchool);
-        setFormData({
-          name: foundSchool.name || "",
-          address: foundSchool.address || "",
-          city: foundSchool.city || "",
-          state: foundSchool.state || "",
-          contact: foundSchool.contact || "",
-          email_id: foundSchool.email_id || "",
-          image: foundSchool.image || "",
-        });
-      } else {
-        setError("School not found");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -337,11 +333,14 @@ export default function EditSchool() {
               </div>
               {formData.image && (
                 <div className="mt-4 flex justify-center">
-                  <img
-                    src={formData.image}
-                    alt="Current school image"
-                    className="h-32 w-32 object-cover rounded-lg border border-gray-300 shadow-sm"
-                  />
+                  <div className="relative h-32 w-32">
+                    <Image
+                      src={formData.image}
+                      alt="Current school image"
+                      fill
+                      className="object-cover rounded-lg border border-gray-300 shadow-sm"
+                    />
+                  </div>
                 </div>
               )}
             </div>
